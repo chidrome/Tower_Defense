@@ -1,0 +1,2 @@
+var graphics;
+var path;
