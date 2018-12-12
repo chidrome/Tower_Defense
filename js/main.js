@@ -1,9 +1,11 @@
 
+
+
 var config = {
     type: Phaser.AUTO,
     parent: 'content',
-    width: 840,
-    height: 650,
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
     physics: {
     	default: 'arcade'
     },
@@ -15,14 +17,19 @@ var config = {
     }
 };
 
+
 var game = new Phaser.Game(config);
- 
+
+
 function preload() {
     // load the game assets – enemy and turret atlas
     this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/spritesheet.json');    
     this.load.image('bullet', 'assets/bullet.png');
     this.load.image('enemy', 'assets/enemySprite.png');
     this.load.image('turret', 'assets/turretSprite.png');
+    this.load.image('bg', 'assets/grass-background.png');
+    this.load.image('start', 'assets/start.png');
+    this.load.image('blueBox', 'assets/blue-box.png');
 }
 
 var Enemy = new Phaser.Class({
@@ -35,9 +42,9 @@ var Enemy = new Phaser.Class({
         {
             Phaser.GameObjects.Image.call(this, scene, 0, 0, 'enemy');
 			this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-
  
         },
+
 
 		startOnPath: function ()
         {
@@ -50,18 +57,21 @@ var Enemy = new Phaser.Class({
             // set the x and y of our enemy to the received from the previous step
             this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
-            // set HP
-            this.hp = 100;
-            
+            // set HP for each enemy
+            this.hp = ENEMY_LIFE;
+
         },
 
         receiveDamage: function(damage) {
-            this.hp -= damage;           
+            this.hp -= BULLET_DAMAGE;           
             
             // if hp drops below 0 we deactivate this enemy
             if(this.hp <= 0) {
                 this.setActive(false);
-                this.setVisible(false);      
+                this.setVisible(false);
+                addScore(10);
+                addMoney(25);
+                endOfRoundTextPopulate(); // when there are no more enemies on the board round over text will display
             }
         },
 
@@ -71,16 +81,22 @@ var Enemy = new Phaser.Class({
             this.follower.t += ENEMY_SPEED * delta;
             
             // get the new x and y coordinates in vec
-            path.getPoint(this.follower.t, this.follower.vec);
+            enemyPosition = path.getPoint(this.follower.t, this.follower.vec);
             
             // update enemy x and y to the newly obtained x and y
             this.setPosition(this.follower.vec.x, this.follower.vec.y);
- 
+       
             // if we have reached the end of the path, remove the enemy
             if (this.follower.t >= 1)
             {
                 this.setActive(false);
                 this.setVisible(false);
+            };
+            // lose a life when an enemy gets to the end point
+            if (enemyPosition === path.getPoint(860, 580)){
+            	PLAYER_LIFE -= 1;
+            	textLife.text = 'Life: ' + PLAYER_LIFE;
+            	endOfRoundTextPopulate(); // when there are no more enemies on the board round over text will display
             }
         }
  
@@ -123,8 +139,6 @@ var Turret = new Phaser.Class({
             }
         }
 
-
-
 });
 
 var Bullet = new Phaser.Class({
@@ -152,9 +166,8 @@ var Bullet = new Phaser.Class({
         //  Bullets fire from the middle of the screen to the given x/y
         this.setPosition(x, y);
  
-    //  we don't need to rotate the bullets as they are round
-    //  this.setRotation(angle);
- 
+    	// 	we don't need to rotate the bullets as they are round
+    	//	this.setRotation(angle);
         this.dx = Math.cos(angle);
         this.dy = Math.sin(angle);
  
@@ -182,6 +195,7 @@ var Bullet = new Phaser.Class({
 function create() {
     // this graphics element is only for visualization, 
     // its not related to our path
+    var background = this.add.tileSprite(0, 0, this.width, this.height, 'bg');
     var graphics = this.add.graphics();
     drawGrid(graphics); 
     
@@ -194,19 +208,19 @@ function create() {
     path.lineTo(220, 300); // fourth turn
     path.lineTo(220, 580); // fifth turn
     path.lineTo(860, 580); // end
-
-
     
-    graphics.lineStyle(6, 0xffffff, 1);
+    graphics.lineStyle(0, 0x7575a3, 1);
     // visualize the path
     path.draw(graphics);
 
+	// create enemies
 	enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
 	this.nextEnemy = 0;
 
 	// user input
 	turrets = this.add.group({ classType: Turret, runChildUpdate: true });
 	this.input.on('pointerdown', placeTurret);
+    
 
 	// create bullets
 	bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
@@ -214,25 +228,57 @@ function create() {
 	// bullets need to overlap with the enemy
 	this.physics.add.overlap(enemies, bullets, damageEnemy);
 
+	// Display the message box where the text will be held
+	this.add.sprite(GAME_WIDTH -350, 437, 'blueBox');
+
+	// Display life and Score on the top right
+    textLife = this.add.text(GAME_WIDTH - 480, 400, 'Life: ' + PLAYER_LIFE, {fill: '#fff'});
+    textScore = this.add.text(GAME_WIDTH - 480, 420, 'Score: ' + PLAYER_SCORE, {fill: '#fff'});
+    textCurrency = this.add.text(GAME_WIDTH - 480, 440, 'Money: $' + MONEY, {fill: '#fff'});
+    textLevel = this.add.text(GAME_WIDTH -480, 460, 'Level: ' + LEVEL, {fill: '#fff'});
+    textRoundOver = this.add.text(GAME_WIDTH - 500, 293, 'ALL ENEMIES CLEARED', {fill: '#fff'});
+    textRoundOver.alpha = 0; // setting the opacity to be 0 and then when enemies are cleared it'll be set to 1 so that it shows on the game board.
+
+    // create a start button & next level button
+    startButton = this.add.sprite(GAME_WIDTH -100, 400, 'start'); // this is a sprite button
+    startButton.alpha = 1;
+
+    // Set game over sprite to be transparent untill it's game over.
+
+
+    // startButton = this.add.text(GAME_WIDTH -150, 400, 'Start', {fill: '#fff'}); // text start button
+    nextLevelButton = this.add.text(GAME_WIDTH - 150, 430, 'Next Level', {fill: '#fff'});
+    startButton.setInteractive();
+    nextLevelButton.setInteractive();
+
+    startButton.on('pointerdown', function() { startGame = true; ROUND_OVER_COUNTER = 1; });
+    nextLevelButton.on('pointerdown', nextLevel);
+
+
 }
 
-function update(time, delta) {  
- 
-    // if its time for the next enemy
-    if (time > this.nextEnemy)
-    {        
-        var enemy = enemies.get();
-        if (enemy)
-        {
-            enemy.setActive(true);
-            enemy.setVisible(true);
-            
-            // place the enemy at the start of the path
-            enemy.startOnPath();
-            
-            this.nextEnemy = time + 2000;
-        }       
-    }
+function update(time, delta) { 
+	if(!startGame){
+		console.log('Place a turret to start');
+	}
+	else if(startGame) {
+    	// if its time for the next enemy
+		    if (time > this.nextEnemy && CURRENT_LVL_QTY < ENEMY_MAX_QTY) {        
+		    	var enemy = enemies.get();
+		        if (enemy) {
+		            enemy.setActive(true);
+		            enemy.setVisible(true);
+		            
+		            // place the enemy at the start of the path
+		            enemy.startOnPath();
+		            
+		            this.nextEnemy = time + 1000;
+		            ROUND_OVER_COUNTER ++;
+		            CURRENT_LVL_QTY ++;
+		        }
 
+		    } 
+	}
 
 }
+
