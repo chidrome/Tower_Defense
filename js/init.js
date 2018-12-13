@@ -111,7 +111,21 @@ function nextLevel(){
     console.log('Current Level is ' + LEVEL);
 }
 
+// start the game
+function start(){
+    startGame = true;
+        if(textRoundOver.alpha === 1){
+            ROUND_OVER_COUNTER = 1;
+        }
+        else{
+            startButton.alpha = 0;
+            pauseButton.alpha = 1;
+        }
+}
 
+function pauseGame(){
+
+}
 
 
 

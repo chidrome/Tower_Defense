@@ -29,7 +29,11 @@ function preload() {
     this.load.image('turret', 'assets/turretSprite.png');
     this.load.image('bg', 'assets/grass-background.png');
     this.load.image('start', 'assets/start.png');
+    this.load.image('nextLevel', 'assets/next_level.png');
+    this.load.image('restart', 'assets/restart.png');
     this.load.image('blueBox', 'assets/blue-box.png');
+    this.load.image('title', 'assets/red-tower-defense-title.png');
+    this.load.image('pause', 'assets/pause.png');
 }
 
 var Enemy = new Phaser.Class({
@@ -231,28 +235,48 @@ function create() {
 	// Display the message box where the text will be held
 	this.add.sprite(GAME_WIDTH -350, 437, 'blueBox');
 
-	// Display life and Score on the top right
+	// Display title
+	this.add.sprite(GAME_WIDTH -400, 40, 'title');
+
+	// create start, pause and restart buttons
+	startButton = this.add.sprite(GAME_WIDTH -130, 400, 'start');
+	pauseButton = this.add.sprite(GAME_WIDTH -130, 400, 'pause');
+	nextLevelButton = this.add.sprite(GAME_WIDTH -130, 440, 'nextLevel');
+	restartButton = this.add.sprite(GAME_WIDTH -130, 480, 'restart');
+    startButton.alpha = 1;
+    pauseButton.alpha = 0;
+    nextLevelButton.alpha = 1;
+
+
+    startButton.setInteractive();
+    nextLevelButton.setInteractive();
+    restartButton.setInteractive();
+    pauseButton.setInteractive();
+
+    startButton.on('pointerdown', start);
+    // Phaser 3 won't let me call a function since "this" doesn't refer to the global object
+    pauseButton.on('pointerdown', function(){
+    	if(textRoundOver.alpha === 0){
+	        this.scene.pause();
+	        pauseButton.alpha = 0;
+	        startButton.alpha = 1;
+	    }
+	});
+
+    nextLevelButton.on('pointerdown', nextLevel);
+
+
+	// Display life and Score
     textLife = this.add.text(GAME_WIDTH - 480, 400, 'Life: ' + PLAYER_LIFE, {fill: '#fff'});
     textScore = this.add.text(GAME_WIDTH - 480, 420, 'Score: ' + PLAYER_SCORE, {fill: '#fff'});
     textCurrency = this.add.text(GAME_WIDTH - 480, 440, 'Money: $' + MONEY, {fill: '#fff'});
-    textLevel = this.add.text(GAME_WIDTH -480, 460, 'Level: ' + LEVEL, {fill: '#fff'});
+    textLevel = this.add.text(GAME_WIDTH -480, 460, 'Level: ' + LEVEL, {fill: '#fff', fontWeight: 'bold'});
+
+
+    // Set game over sprite to be transparent untill it's game over.
     textRoundOver = this.add.text(GAME_WIDTH - 500, 293, 'ALL ENEMIES CLEARED', {fill: '#fff'});
     textRoundOver.alpha = 0; // setting the opacity to be 0 and then when enemies are cleared it'll be set to 1 so that it shows on the game board.
 
-    // create a start button & next level button
-    startButton = this.add.sprite(GAME_WIDTH -100, 400, 'start'); // this is a sprite button
-    startButton.alpha = 1;
-
-    // Set game over sprite to be transparent untill it's game over.
-
-
-    // startButton = this.add.text(GAME_WIDTH -150, 400, 'Start', {fill: '#fff'}); // text start button
-    nextLevelButton = this.add.text(GAME_WIDTH - 150, 430, 'Next Level', {fill: '#fff'});
-    startButton.setInteractive();
-    nextLevelButton.setInteractive();
-
-    startButton.on('pointerdown', function() { startGame = true; ROUND_OVER_COUNTER = 1; });
-    nextLevelButton.on('pointerdown', nextLevel);
 
 
 }
