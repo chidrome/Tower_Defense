@@ -26,7 +26,7 @@ var ENEMY_MAX_QTY = 5;
 var TURRET_MAX_QTY = 4;
 var ENEMY_LIFE = 100;
 var ROUND_OVER_COUNTER = 1; // uses round over counter to end the round once it hits 0. 
-var TURRET_COST = 50;
+var TURRET_COST = 250;
 var CURRENT_LVL_QTY = 0; // used for stopping enemies from spawning when the current lvl qty === enemy max qty
 var LEVEL = 1;
 
@@ -37,12 +37,24 @@ var graphics;
 var path;
 var enemies;
 var turrets;
+var bullets;
+var startButton;
+var pauseButton;
+var restartButton;
+var nextLevelButton;
+var textLife;
+var textScore;
+var textCurrency;
+var textLevel;
+var start;
+var textRoundOver;
+var textGamePaused;
 
 
 // I Defined these
 PLAYER_LIFE = 100;
 PLAYER_SCORE = 0;
-MONEY = 20000;
+MONEY = 250;
 startGame = false; // toggle to true when the game starts
 
 

@@ -1,3 +1,163 @@
+var Enemy = new Phaser.Class({
+ 
+        Extends: Phaser.GameObjects.Image,
+ 
+        initialize:
+ 
+        function Enemy (scene)
+        {
+            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'enemy');
+            this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
+ 
+        },
+
+
+        startOnPath: function ()
+        {
+            // set the t parameter at the start of the path
+            this.follower.t = 0;
+            
+            // get x and y of the given t point            
+            path.getPoint(this.follower.t, this.follower.vec);
+            
+            // set the x and y of our enemy to the received from the previous step
+            this.setPosition(this.follower.vec.x, this.follower.vec.y);
+
+            // set HP for each enemy
+            this.hp = ENEMY_LIFE;
+
+        },
+
+        receiveDamage: function(damage) {
+            this.hp -= BULLET_DAMAGE;           
+            
+            // if hp drops below 0 we deactivate this enemy
+            if(this.hp <= 0) {
+                this.setActive(false);
+                this.setVisible(false);
+                addScore(10);
+                addMoney(15);
+                endOfRoundTextPopulate(); // when there are no more enemies on the board round over text will display
+            }
+        },
+
+        update: function (time, delta)
+        {
+            // move the t point along the path, 0 is the start and 0 is the end
+            this.follower.t += ENEMY_SPEED * delta;
+            
+            // get the new x and y coordinates in vec
+            enemyPosition = path.getPoint(this.follower.t, this.follower.vec);
+            
+            // update enemy x and y to the newly obtained x and y
+            this.setPosition(this.follower.vec.x, this.follower.vec.y);
+       
+            // if we have reached the end of the path, remove the enemy
+            if (this.follower.t >= 1)
+            {
+                this.setActive(false);
+                this.setVisible(false);
+            };
+            // lose a life when an enemy gets to the end point
+            if (enemyPosition === path.getPoint(860, 580)){
+                PLAYER_LIFE -= 1;
+                textLife.text = 'Life: ' + PLAYER_LIFE;
+                endOfRoundTextPopulate(); // when there are no more enemies on the board round over text will display
+            }
+        }
+ 
+});
+
+
+var Turret = new Phaser.Class({
+ 
+        Extends: Phaser.GameObjects.Image,
+ 
+        initialize:
+ 
+        function Turret (scene)
+        {
+            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'turret');
+            this.nextTic = 0;
+        },
+        // we will place the turret according to the grid
+        place: function(i, j) {            
+            this.y = i * 40 + 40/2;
+            this.x = j * 40 + 40/2;
+            map[i][j] = 1;
+        },
+
+        fire: function() {
+            var enemy = getEnemy(this.x, this.y, 120);
+            if(enemy) {
+                var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
+                addBullet(this.x, this.y, angle);
+                this.angle = (angle + Math.PI/2) * Phaser.Math.RAD_TO_DEG;
+            }
+        },
+
+        update: function (time, delta)
+        {
+            // time to shoot
+            if(time > this.nextTic) {   
+                this.fire();         
+                this.nextTic = time + 300;      
+            }
+        }
+
+});
+
+var Bullet = new Phaser.Class({
+ 
+    Extends: Phaser.GameObjects.Image,
+ 
+    initialize:
+ 
+    function Bullet (scene)
+    {
+        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'laserBullet');
+ 
+        this.dx = 0;
+        this.dy = 0;
+        this.lifespan = 0;
+ 
+        this.speed = Phaser.Math.GetSpeed(900, 1);
+    },
+ 
+    fire: function (x, y, angle)
+    {
+        this.setActive(true);
+        this.setVisible(true);
+ 
+        //  Bullets fire from the middle of the screen to the given x/y
+        this.setPosition(x, y);
+ 
+        //  we don't need to rotate the bullets as they are round
+        this.setRotation(angle);
+        this.dx = Math.cos(angle);
+        this.dy = Math.sin(angle);
+ 
+        this.lifespan = 300;
+    },
+ 
+    update: function (time, delta)
+    {
+        this.lifespan -= delta;
+ 
+        this.x += this.dx * (this.speed * delta);
+        this.y += this.dy * (this.speed * delta);
+ 
+        if (this.lifespan <= 0)
+        {
+            this.setActive(false);
+            this.setVisible(false);
+        }
+    }
+ 
+});
+
+
+
 
 // create the grids on the board. but hide them.
 function drawGrid(graphics) {
@@ -72,6 +232,8 @@ function endOfRoundTextPopulate(){
     if(ROUND_OVER_COUNTER -1 === 0 && startGame && CURRENT_LVL_QTY === ENEMY_MAX_QTY){
         console.log(textRoundOver.alpha);
         textRoundOver.alpha = 1;
+        pauseButton.alpha = 0;
+        startButton.alpha = 1;
     }
 }
 
@@ -100,8 +262,9 @@ function nextLevel(){
     }
     else if(startGame && textRoundOver.alpha === 1){
         LEVEL++;
-        ENEMY_MAX_QTY += 2;
-        ENEMY_SPEED += .00001;
+        ENEMY_MAX_QTY += 3;
+        ENEMY_SPEED += .000012;
+        ENEMY_LIFE += 65;
         CURRENT_LVL_QTY = 0;
         textRoundOver.alpha = 0;
         startGame = false;
@@ -117,14 +280,18 @@ function start(){
         if(textRoundOver.alpha === 1){
             ROUND_OVER_COUNTER = 1;
         }
-        else{
+        else {
             startButton.alpha = 0;
             pauseButton.alpha = 1;
         }
 }
 
 function pauseGame(){
-
+    if(textRoundOver.alpha === 0){
+        this.scene.pause();
+        pauseButton.alpha = 0;
+        startButton.alpha = 1;
+    }
 }
 
 
