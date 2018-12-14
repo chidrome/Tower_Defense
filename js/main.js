@@ -26,6 +26,8 @@ var mainScene = new Phaser.Class({
 	    this.load.image('title', 'assets/img/red-tower-defense-title.png');
 	    this.load.image('pause', 'assets/img/pause.png');
 	    this.load.image('laserBullet', 'assets/img/beam.png');
+	    this.load.image('win', 'assets/img/game-over-win.png');
+	    this.load.image('lose', 'assets/img/game-over-lose.png');
 
 	    // load some audio
 	    this.load.audio('pewpew', '/assets/audio/laser.mp3');
@@ -64,8 +66,24 @@ var mainScene = new Phaser.Class({
 	    path.draw(graphics);
 
 
+
 	    // draw a circle around the towers for firing radius
 
+	    // create the animation
+        this.anims.create({
+            key: 'walkStraight',
+                frames: [
+                    { key: 'spider'},
+                    { key: 'spider2'},
+                    { key: 'spider3'},
+                    { key: 'spider4'},
+                    { key: 'spider5'},
+                    { key: 'spider6', duration: 100}
+                ],
+                frameRate: 8,
+            repeat: -1
+
+        });
 
 
 	 //    // create music
@@ -118,16 +136,10 @@ var mainScene = new Phaser.Class({
 
 	    startButton.on('pointerdown', start);
 	   	nextLevelButton.on('pointerdown', nextLevel);
-	   	switchButton(pauseButton, this, 'pauseScene');
-	    // pauseButton.on('pointerdown', function(){
-	    // 	pauseButton.alpha = 0;
-	    // 	startButton.alpha = 0;
-	    // 	this.scene.switch('pauseScene');
-	    // }, this);
+	   	switchButton(pauseButton, this, 'pauseScene'); // switch between pause and resume button when switching scenes
 	    restartButton.on('pointerdown', function(){
 	    	this.scene.restart();
 	    }, this);
-
 
 		// Display life and Score
 	    textLife = this.add.text(GAME_WIDTH - 480, 400, 'Life: ' + PLAYER_LIFE, {fill: '#fff'});
@@ -137,6 +149,12 @@ var mainScene = new Phaser.Class({
 
 
 	    // Set game over sprite to be transparent untill it's game over.
+	    gameOverWin = this.add.sprite(GAME_WIDTH -410, 293, 'win');
+	    gameOverWin.alpha = 0;
+	    gameOverLose = this.add.sprite(GAME_WIDTH -410, 293, 'lose');
+	    gameOverLose.alpha = 0;
+
+	    // next level text and info
 	    textRoundOver = this.add.text(GAME_WIDTH - 620, 293, 'ALL ENEMIES CLEARED. CLICK NEXT LEVEL TO CONTINUE', {fill: '#fff'});
 	    textRoundOver.alpha = 0; // setting the opacity to be 0 and then when enemies are cleared it'll be set to 1 so that it shows on the game board.
 	    textNextLevel = this.add.text(GAME_WIDTH - 530, 293, 'PLACE YOUR TOWERS AND CLICK START', {fill: '#fff'});
@@ -160,7 +178,7 @@ var mainScene = new Phaser.Class({
 			            // place the enemy at the start of the path
 			            enemy.startOnPath();
 			            
-			            this.nextEnemy = time + 1000;
+			            this.nextEnemy = time + SPAWN_TIME;
 			            ROUND_OVER_COUNTER ++;
 			            CURRENT_LVL_QTY ++;
 			        }
