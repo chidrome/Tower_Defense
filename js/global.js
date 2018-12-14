@@ -59,7 +59,7 @@ var gameOverLose;
 
 
 // I Defined these
-PLAYER_LIFE = 100;
+PLAYER_LIFE = 50;
 PLAYER_SCORE = 0;
 MONEY = 250;
 startGame = false; // toggle to true when the game starts
