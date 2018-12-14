@@ -1,3 +1,6 @@
+
+///////////////////////////////////////////////// Game Objects Class ///////////////////////////////////////////////// 
+
 var Enemy = new Phaser.Class({
  
         Extends: Phaser.GameObjects.Image,
@@ -6,11 +9,31 @@ var Enemy = new Phaser.Class({
  
         function Enemy (scene)
         {
-            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'enemy');
+            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'spider');
+                    
+
+            // this.anims.create({
+            //     key: 'walkStraight',
+            //     frames: [
+            //         { key: 'spider'},
+            //         { key: 'spider2'},
+            //         { key: 'spider3'},
+            //         { key: 'spider4'},
+            //         { key: 'spider5'},
+            //         { key: 'spider6', duration: 100}
+            //     ],
+            //     frameRate: 8,
+            //     repeat: -1
+
+            // });
+
+            // this.add.sprite(100, 655, 'spider').play('walkStraight');
+
+
+
             this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
  
         },
-
 
         startOnPath: function ()
         {
@@ -158,6 +181,8 @@ var Bullet = new Phaser.Class({
 
 
 
+///////////////////////////////////////////////// End of Game Objects Class ///////////////////////////////////////////////// 
+
 
 // create the grids on the board. but hide them.
 function drawGrid(graphics) {
@@ -269,6 +294,7 @@ function nextLevel(){
         textRoundOver.alpha = 0;
         startGame = false;
         textLevel.text = 'Level: ' + LEVEL;
+        textNextLevel.alpha = 1;
         console.log(startGame);
     }
     console.log('Current Level is ' + LEVEL);
@@ -277,6 +303,7 @@ function nextLevel(){
 // start the game
 function start(){
     startGame = true;
+    textNextLevel.alpha = 0;
         if(textRoundOver.alpha === 1){
             ROUND_OVER_COUNTER = 1;
         }
@@ -286,16 +313,46 @@ function start(){
         }
 }
 
-function pauseGame(){
-    if(textRoundOver.alpha === 0){
-        this.scene.pause();
-        pauseButton.alpha = 0;
-        startButton.alpha = 1;
-    }
+// set buttons to be interactive
+function setInteractive(buttonsArray){
+    buttonsArray.forEach(function(button){
+        button.setInteractive();
+    });
+}
+
+// change the size of the buttons when the pointer is over it
+function interctiveButtons(buttonsArray){
+    buttonsArray.forEach(function(button){      
+        button.on('pointerover', function()
+        {
+
+            button.setScale(1.2, 1.2);
+        });
+        button.on('pointerout', function()
+        {
+            button.setScale(1, 1);
+        });
+    })
+}
+
+// be able to switch scenes.
+function switchButton(button, thegame, whichScene){
+    button.on('pointerdown', function()
+        {
+            // if(pauseButton.alpha === 0 && startButton.alpha === 0){
+            //     pauseButton === 0;
+            // } else if()
+        pauseButton.alpha = 1;
+        thegame.scene.switch(whichScene);
+        }, thegame);
+    console.log('start alpha is ' + startButton.alpha);
+    console.log('pause alpha is ' + pauseButton.alpha);
+    // console.log('resume alpha is ' + resumeButton.alpha);
 }
 
 
 
+        
 
 
 

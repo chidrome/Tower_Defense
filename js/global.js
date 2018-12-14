@@ -32,6 +32,7 @@ var LEVEL = 1;
 
 
 
+
 // variables
 var graphics;
 var path;
@@ -49,6 +50,7 @@ var textLevel;
 var start;
 var textRoundOver;
 var textGamePaused;
+var textNextLevel;
 
 
 // I Defined these

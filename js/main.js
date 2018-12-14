@@ -1,16 +1,6 @@
 
 
-
-
-
-
-
-// class mainScene extends Phaser.Scene {
-
-// constructor()
-// {
-// 	super({ key: 'mainScene', active: true});
-// }
+///////////////////////////////////////////////// Scenes /////////////////////////////////////////////////
 
 var mainScene = new Phaser.Class({
 
@@ -26,7 +16,6 @@ var mainScene = new Phaser.Class({
 	preload: function() {
 	    // load the game assets – enemy and turret atlas
 	    // this.load.atlas('sprites', 'assets/spritesheet.png', 'assets/spritesheet.json');    
-	    this.load.image('bullet', 'assets/img/bullet.png');
 	    this.load.image('enemy', 'assets/img/enemySprite.png');
 	    this.load.image('turret', 'assets/img/turretSprite.png');
 	    this.load.image('bg', 'assets/img/grass-background.png');
@@ -41,6 +30,15 @@ var mainScene = new Phaser.Class({
 	    // load some audio
 	    this.load.audio('pewpew', '/assets/audio/laser.mp3');
 	    this.load.audio('music', '/assets/audio/battle.m4a');
+
+	    // enemy moving sprites
+	    this.load.path = 'assets/img/';
+	    this.load.image('spider', 'spider04_05.png');
+	    this.load.image('spider2', 'spider04_06.png');
+	    this.load.image('spider3', 'spider04_07.png');
+	    this.load.image('spider4', 'spider04_08.png');
+	    this.load.image('spider5', 'spider04_09.png');
+	    this.load.image('spider6', 'spider04_10.png');
 	},
 
 	 
@@ -64,6 +62,11 @@ var mainScene = new Phaser.Class({
 	    graphics.lineStyle(0, 0x7575a3, 1);
 	    // visualize the path
 	    path.draw(graphics);
+
+
+	    // draw a circle around the towers for firing radius
+
+
 
 	 //    // create music
 	 //    var pewpew = this.sound.add('pewpew', 0.3);
@@ -106,27 +109,24 @@ var mainScene = new Phaser.Class({
 		restartButton = this.add.sprite(GAME_WIDTH -130, 480, 'restart');
 	    startButton.alpha = 1;
 	    pauseButton.alpha = 0;
-	    nextLevelButton.alpha = 1;
 
+	    // make each button interactive
+	    setInteractive([startButton, nextLevelButton, restartButton, pauseButton]);
 
-	    startButton.setInteractive();
-	    nextLevelButton.setInteractive();
-	    restartButton.setInteractive();
-	    pauseButton.setInteractive();
+	    // make buttons interactive when hovered over
+	    interctiveButtons([startButton, nextLevelButton, restartButton, pauseButton]);
 
 	    startButton.on('pointerdown', start);
-	    // Phaser 3 won't let me call a function since "this" doesn't refer to the global object
-	    pauseButton.on('pointerdown', function(){
-	    	pauseButton.alpha = 0;
-	    	startButton.alpha = 0;
-	    	// this.scene.launch('pauseScene');
-	    	this.scene.switch('pauseScene');
+	   	nextLevelButton.on('pointerdown', nextLevel);
+	   	switchButton(pauseButton, this, 'pauseScene');
+	    // pauseButton.on('pointerdown', function(){
+	    // 	pauseButton.alpha = 0;
+	    // 	startButton.alpha = 0;
+	    // 	this.scene.switch('pauseScene');
+	    // }, this);
+	    restartButton.on('pointerdown', function(){
+	    	this.scene.restart();
 	    }, this);
-	    restartButton.on('resume', function(){
-	    	console.log('game is resumed');
-	    });
-
-	    nextLevelButton.on('pointerdown', nextLevel);
 
 
 		// Display life and Score
@@ -137,9 +137,10 @@ var mainScene = new Phaser.Class({
 
 
 	    // Set game over sprite to be transparent untill it's game over.
-	    textRoundOver = this.add.text(GAME_WIDTH - 500, 293, 'ALL ENEMIES CLEARED', {fill: '#fff'});
+	    textRoundOver = this.add.text(GAME_WIDTH - 620, 293, 'ALL ENEMIES CLEARED. CLICK NEXT LEVEL TO CONTINUE', {fill: '#fff'});
 	    textRoundOver.alpha = 0; // setting the opacity to be 0 and then when enemies are cleared it'll be set to 1 so that it shows on the game board.
-
+	    textNextLevel = this.add.text(GAME_WIDTH - 530, 293, 'PLACE YOUR TOWERS AND CLICK START', {fill: '#fff'});
+	    textNextLevel.alpha = 0;
 
 
 	},
@@ -171,14 +172,8 @@ var mainScene = new Phaser.Class({
 
 });
 
-/////////////////////////////////////////// BELOW WILL BE THE PAUSE SCENE///////////////////////////////////////
+// BELOW WILL BE THE PAUSE SCENE //
 
-// class pauseScene extends Phaser.Scene{
-
-// constructor()
-// {
-// 	super({ key: 'pauseScene', active: true});
-// }
 var pauseScene = new Phaser.Class({
 
 	Extends: Phaser.Scene,
@@ -200,16 +195,14 @@ var pauseScene = new Phaser.Class({
 		textGamePaused = this.add.text(GAME_WIDTH - 500, 293, 'GAME PAUSED', {fill: '#fff'});
 		resumeButton = this.add.sprite(GAME_WIDTH -130, 400, 'resume');
 		resumeButton.setInteractive();
-    	resumeButton.on('pointerdown', function(){
-	    	pauseButton.alpha = 1;
-	    	// startButton.alpha = 0;
-	    	this.scene.switch('mainScene');
-    	}, this);
+		interctiveButtons([resumeButton]);
+		switchButton(resumeButton, this, 'mainScene');
 	}
 
 });
 
 
+///////////////////////////////////////////////// Config ///////////////////////////////////////////////// 
 
 var config = {
     type: Phaser.AUTO,
@@ -224,8 +217,6 @@ var config = {
 
 
 var game = new Phaser.Game(config);
-
-
 
 
 
