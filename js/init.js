@@ -270,6 +270,40 @@ function subtractMoney(amount){
 // next level function should reset the counters and increase lvl/enemy max qty/enemy speed
 function nextLevel(){
     switch(true){
+        case (LEVEL > 14 && startGame && textRoundOver.alpha === 1):
+            ENEMY_MAX_QTY += 10;
+            ENEMY_SPEED += .000007; 
+            ENEMY_LIFE += 250;
+            LEVEL++;
+            textRoundOver.alpha = 0;
+            startGame = false;
+            textLevel.text = 'Level: ' + LEVEL;
+            CURRENT_LVL_QTY = 0;
+            textNextLevel.alpha = 1;
+            break;
+        case (LEVEL > 12 && startGame && textRoundOver.alpha === 1):
+            ENEMY_MAX_QTY += 7;
+            ENEMY_SPEED += .000007; 
+            ENEMY_LIFE += 125;
+            LEVEL++;
+            textRoundOver.alpha = 0;
+            startGame = false;
+            textLevel.text = 'Level: ' + LEVEL;
+            CURRENT_LVL_QTY = 0;
+            textNextLevel.alpha = 1;
+            break;
+        case (LEVEL > 11 && startGame && textRoundOver.alpha === 1):
+            MONEY_PER_KILL -= 5;
+            ENEMY_MAX_QTY += 7;
+            ENEMY_SPEED += .000007; 
+            ENEMY_LIFE += 125;
+            LEVEL++;
+            textRoundOver.alpha = 0;
+            startGame = false;
+            textLevel.text = 'Level: ' + LEVEL;
+            CURRENT_LVL_QTY = 0;
+            textNextLevel.alpha = 1;
+            break;
         case (LEVEL > 10 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 7;
             ENEMY_SPEED += .000007; 
