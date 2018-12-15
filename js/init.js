@@ -126,7 +126,7 @@ var Bullet = new Phaser.Class({
         this.dy = 0;
         this.lifespan = 0;
  
-        this.speed = Phaser.Math.GetSpeed(900, 1);
+        this.speed = Phaser.Math.GetSpeed(1100, 1);
     },
  
     fire: function (x, y, angle)
@@ -272,8 +272,8 @@ function nextLevel(){
     switch(true){
         case (LEVEL > 14 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 10;
-            ENEMY_SPEED += .000007; 
-            ENEMY_LIFE += 250;
+            ENEMY_SPEED += .000001; 
+            ENEMY_LIFE += 700;
             LEVEL++;
             textRoundOver.alpha = 0;
             startGame = false;
@@ -283,8 +283,8 @@ function nextLevel(){
             break;
         case (LEVEL > 12 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 7;
-            ENEMY_SPEED += .000007; 
-            ENEMY_LIFE += 125;
+            ENEMY_SPEED += .000003; 
+            ENEMY_LIFE += 500;
             LEVEL++;
             textRoundOver.alpha = 0;
             startGame = false;
@@ -317,8 +317,8 @@ function nextLevel(){
             break;
          case (LEVEL > 8 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 5;
-            ENEMY_SPEED += .000007; 
-            ENEMY_LIFE += 125;
+            ENEMY_SPEED += .000001; 
+            ENEMY_LIFE += 400;
             LEVEL++;
             textRoundOver.alpha = 0;
             startGame = false;
