@@ -295,7 +295,6 @@ function nextLevel(){
         case (LEVEL > 11 && startGame && textRoundOver.alpha === 1):
             MONEY_PER_KILL -= 5;
             ENEMY_MAX_QTY += 7;
-            ENEMY_SPEED += .000007; 
             ENEMY_LIFE += 125;
             LEVEL++;
             textRoundOver.alpha = 0;
@@ -349,8 +348,6 @@ function nextLevel(){
             textLevel.text = 'Level: ' + LEVEL;
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
-            console.log('Level 5 + increased speed ' + ENEMY_SPEED);
-            console.log('Start game is ' + startGame);
             break;
         case (startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 3;
@@ -362,12 +359,9 @@ function nextLevel(){
             textLevel.text = 'Level: ' + LEVEL;
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
-            console.log('Level 1 + ' + ENEMY_SPEED);
-            console.log('Start game is ' + startGame);
             break;
         default:
     }
-    console.log('Start game is ' + startGame);
 }
 
 // start the game

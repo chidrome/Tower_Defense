@@ -138,7 +138,7 @@ var mainScene = new Phaser.Class({
 	   	nextLevelButton.on('pointerdown', nextLevel);
 	   	switchButton(pauseButton, this, 'pauseScene'); // switch between pause and resume button when switching scenes
 	    restartButton.on('pointerdown', function(){
-	    	this.scene.restart();
+			console.log("Just refresh the page");
 	    }, this);
 
 		// Display life and Score
