@@ -272,7 +272,7 @@ function nextLevel(){
     switch(true){
         case (LEVEL > 14 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 10;
-            ENEMY_SPEED += .000001; 
+            // ENEMY_SPEED += .000001; 
             ENEMY_LIFE += 700;
             LEVEL++;
             textRoundOver.alpha = 0;
@@ -283,7 +283,7 @@ function nextLevel(){
             break;
         case (LEVEL > 12 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 7;
-            ENEMY_SPEED += .000003; 
+            // ENEMY_SPEED += .000003; 
             ENEMY_LIFE += 500;
             LEVEL++;
             textRoundOver.alpha = 0;
@@ -305,7 +305,7 @@ function nextLevel(){
             break;
         case (LEVEL > 10 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 7;
-            ENEMY_SPEED += .000007; 
+            // ENEMY_SPEED += .000007; 
             ENEMY_LIFE += 125;
             LEVEL++;
             textRoundOver.alpha = 0;
@@ -328,7 +328,7 @@ function nextLevel(){
         case (LEVEL > 7 && startGame && textRoundOver.alpha === 1):
             MONEY_PER_KILL -= 5;
             ENEMY_MAX_QTY += 5;
-            ENEMY_SPEED += .000007; 
+            ENEMY_SPEED += .000012; 
             ENEMY_LIFE += 125;
             LEVEL++;
             textRoundOver.alpha = 0;
