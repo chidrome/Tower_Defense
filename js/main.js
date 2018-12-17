@@ -30,7 +30,6 @@ var mainScene = new Phaser.Class({
 	    this.load.image('lose', 'assets/img/game-over-lose.png');
 	    this.load.image('upgrade', 'assets/img/upgrade_damage.png');
 	    this.load.image('nextLevelText', 'assets/img/next-level-text.png');
-	    this.load.image('backupbg', 'assets/img/grass-background2.png');
 
 	    // load some audio
 	    this.load.audio('pewpew', '/assets/audio/laser.mp3');
@@ -133,7 +132,7 @@ var mainScene = new Phaser.Class({
 
 
 	    // create music
-	    var pewpew = this.sound.add('pewpew', 0.3);
+	    // var pewpew = this.sound.add('pewpew', 0.3);
 	    var music = this.sound.add('music', {
 	    mute: false,
 	    volume: 1,
