@@ -18,6 +18,8 @@ Sprites animation can sometimes cause a delay in enemy spawning and will cause t
 
 Tower upgrades will upgrade all tower's rather than individual towers.
 
+Game Over - scene still continues to update once the game is over and all lives are lost.
+
 
 Technologies Used:
 
