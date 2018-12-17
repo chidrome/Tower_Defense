@@ -133,17 +133,17 @@ var mainScene = new Phaser.Class({
 
 	    // create music
 	    // var pewpew = this.sound.add('pewpew', 0.3);
-	    var music = this.sound.add('music', {
-	    mute: false,
-	    volume: 1,
-	    rate: 1,
-	    detune: 0,
-	    seek: 0,
-	    loop: true,
-	    delay: 0
-		});
+	 //    var music = this.sound.add('music', {
+	 //    mute: false,
+	 //    volume: 1,
+	 //    rate: 1,
+	 //    detune: 0,
+	 //    seek: 0,
+	 //    loop: true,
+	 //    delay: 0
+		// });
 
-	    music.play();
+	 //    music.play();
 
 		// create enemies
 		enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
