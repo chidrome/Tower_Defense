@@ -459,7 +459,6 @@ function switchButton(button, thegame, whichScene){
 
 
 
-        
 
 
 

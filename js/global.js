@@ -18,7 +18,7 @@ var map = [	[ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 
 
 //constants
-var GAME_WIDTH= 840;
+var GAME_WIDTH = 840;
 var GAME_HEIGHT = 650;
 var BULLET_DAMAGE = 50;
 var ENEMY_SPEED = .2/10000;

@@ -30,6 +30,7 @@ var mainScene = new Phaser.Class({
 	    this.load.image('lose', 'assets/img/game-over-lose.png');
 	    this.load.image('upgrade', 'assets/img/upgrade_damage.png');
 	    this.load.image('nextLevelText', 'assets/img/next-level-text.png');
+	    this.load.image('backupbg', 'assets/img/grass-background2.png');
 
 	    // load some audio
 	    this.load.audio('pewpew', '/assets/audio/laser.mp3');
@@ -63,6 +64,7 @@ var mainScene = new Phaser.Class({
 	    // this graphics element is only for visualization, 
 	    // its not related to our path
 	    let background = this.add.tileSprite(0, 0, this.width, this.height, 'bg');
+	    
 	    let graphics = this.add.graphics();
 	    drawGrid(graphics);
 	    
