@@ -28,19 +28,34 @@ var mainScene = new Phaser.Class({
 	    this.load.image('laserBullet', 'assets/img/beam.png');
 	    this.load.image('win', 'assets/img/game-over-win.png');
 	    this.load.image('lose', 'assets/img/game-over-lose.png');
+	    this.load.image('upgrade', 'assets/img/upgrade_damage.png');
+	    this.load.image('nextLevelText', 'assets/img/next-level-text.png');
 
 	    // load some audio
 	    this.load.audio('pewpew', '/assets/audio/laser.mp3');
 	    this.load.audio('music', '/assets/audio/battle.m4a');
 
 	    // enemy moving sprites
-	    this.load.path = 'assets/img/';
-	    this.load.image('spider', 'spider04_05.png');
-	    this.load.image('spider2', 'spider04_06.png');
-	    this.load.image('spider3', 'spider04_07.png');
-	    this.load.image('spider4', 'spider04_08.png');
-	    this.load.image('spider5', 'spider04_09.png');
-	    this.load.image('spider6', 'spider04_10.png');
+	    this.load.path = 'assets/img/sprite-animation/';
+	    this.load.image('spiderStraight', 'spider04_05.png');
+	    this.load.image('spiderStraight2', 'spider04_06.png');
+	    this.load.image('spiderStraight3', 'spider04_07.png');
+	    this.load.image('spiderStraight4', 'spider04_08.png');
+	    this.load.image('spiderStraight5', 'spider04_09.png');
+	    this.load.image('spiderStraight6', 'spider04_10.png');
+	    this.load.image('spiderRight', 'spider04_31.png');
+	    this.load.image('spiderRight2', 'spider04_32.png');
+	    this.load.image('spiderRight3', 'spider04_33.png');
+	    this.load.image('spiderRight4', 'spider04_34.png');
+	    this.load.image('spiderRight5', 'spider04_35.png');
+	    this.load.image('spiderRight6', 'spider04_36.png');
+	    this.load.image('spiderRight7', 'spider04_37.png');
+	    this.load.image('spiderRight8', 'spider04_38.png');
+	    this.load.image('spiderRight9', 'spider04_39.png');
+	    this.load.image('spiderDeath', 'spider04_41.png');
+	    this.load.image('spiderDeath2', 'spider04_42.png');
+	    this.load.image('spiderDeath3', 'spider04_43.png');
+	    this.load.image('spiderDeath4', 'spider04_44.png');
 	},
 
 	 
@@ -73,12 +88,41 @@ var mainScene = new Phaser.Class({
         this.anims.create({
             key: 'walkStraight',
                 frames: [
-                    { key: 'spider'},
-                    { key: 'spider2'},
-                    { key: 'spider3'},
-                    { key: 'spider4'},
-                    { key: 'spider5'},
-                    { key: 'spider6', duration: 100}
+                    { key: 'spiderStraight'},
+                    { key: 'spiderStraight2'},
+                    { key: 'spiderStraight3'},
+                    { key: 'spiderStraight4'},
+                    { key: 'spiderStraight5'},
+                    { key: 'spiderStraight6', duration: 100}
+                ],
+                frameRate: 8,
+            repeat: -1
+
+        });
+        this.anims.create({
+            key: 'death',
+                frames: [
+                    { key: 'spiderDeath'},
+                    { key: 'spiderDeath2'},
+                    { key: 'spiderDeath3'},
+                    { key: 'spiderDeath4', duration: 100}
+                ],
+                frameRate: 8,
+            repeat: 0
+
+        });
+        this.anims.create({
+            key: 'walkRight',
+                frames: [
+                    { key: 'spiderRight'},
+                    { key: 'spiderRight2'},
+                    { key: 'spiderRight3'},
+                    { key: 'spiderRight4'},
+                    { key: 'spiderRight5'},
+                    { key: 'spiderRight6'},
+                    { key: 'spiderRight7'},
+                    { key: 'spiderRight8'},
+                    { key: 'spiderRight9', duration: 100}
                 ],
                 frameRate: 8,
             repeat: -1
@@ -86,19 +130,19 @@ var mainScene = new Phaser.Class({
         });
 
 
-	    // create music
-	    var pewpew = this.sound.add('pewpew', 0.3);
-	    var music = this.sound.add('music', {
-	    mute: false,
-	    volume: 1,
-	    rate: 1,
-	    detune: 0,
-	    seek: 0,
-	    loop: true,
-	    delay: 0
-		});
+	 //    // create music
+	 //    var pewpew = this.sound.add('pewpew', 0.3);
+	 //    var music = this.sound.add('music', {
+	 //    mute: false,
+	 //    volume: 1,
+	 //    rate: 1,
+	 //    detune: 0,
+	 //    seek: 0,
+	 //    loop: true,
+	 //    delay: 0
+		// });
 
-	    music.play();
+	 //    music.play();
 
 		// create enemies
 		enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
@@ -132,7 +176,7 @@ var mainScene = new Phaser.Class({
 	    setInteractive([startButton, nextLevelButton, restartButton, pauseButton]);
 
 	    // make buttons interactive when hovered over
-	    interctiveButtons([startButton, nextLevelButton, restartButton, pauseButton]);
+	    interactiveButtons([startButton, nextLevelButton, restartButton, pauseButton]);
 
 	    startButton.on('pointerdown', start);
 	   	nextLevelButton.on('pointerdown', nextLevel);
@@ -157,35 +201,36 @@ var mainScene = new Phaser.Class({
 	    // next level text and info
 	    textRoundOver = this.add.text(GAME_WIDTH - 620, 293, 'ALL ENEMIES CLEARED. CLICK NEXT LEVEL TO CONTINUE', {fill: '#fff'});
 	    textRoundOver.alpha = 0; // setting the opacity to be 0 and then when enemies are cleared it'll be set to 1 so that it shows on the game board.
-	    textNextLevel = this.add.text(GAME_WIDTH - 530, 293, 'PLACE YOUR TOWERS AND CLICK START', {fill: '#fff'});
+	    textNextLevel = this.add.sprite(GAME_WIDTH - 400, 300, 'nextLevelText');
 	    textNextLevel.alpha = 0;
+
+	    // upgrade sprite
+	    upgrade = this.add.sprite(GAME_WIDTH - 400, 300, 'upgrade');
+	    upgrade.alpha = 0;
 
 
 	},
 
-	update: function(time, delta) { 
+	update: function(time, delta) {
 		if(!startGame){
 			console.log('Place a turret to start');
 		}
 		else if(startGame) {
 	    	// if its time for the next enemy
-			    if (time > this.nextEnemy && CURRENT_LVL_QTY < ENEMY_MAX_QTY) {        
-			    	var enemy = enemies.get();
-			        if (enemy) {
-			            enemy.setActive(true);
-			            enemy.setVisible(true);
-			            
-			            // place the enemy at the start of the path
-			            enemy.startOnPath();
-			            
-			            this.nextEnemy = time + SPAWN_TIME;
-			            ROUND_OVER_COUNTER ++;
-			            CURRENT_LVL_QTY ++;
-			        }
-
-			    } 
+		    if (time > this.nextEnemy && CURRENT_LVL_QTY < ENEMY_MAX_QTY) {        
+		    	var enemy = enemies.get();
+		        if (enemy) {
+		            enemy.setActive(true);
+		            enemy.setVisible(true);
+		     
+		            // place the enemy at the start of the path
+		            enemy.startOnPath();
+		            
+		            this.nextEnemy = time + SPAWN_TIME;
+		            ROUND_OVER_COUNTER ++;
+		            CURRENT_LVL_QTY ++;		        }
+		    } 
 		}
-
 	}
 
 });
@@ -213,7 +258,7 @@ var pauseScene = new Phaser.Class({
 		textGamePaused = this.add.text(GAME_WIDTH - 500, 293, 'GAME PAUSED', {fill: '#fff'});
 		resumeButton = this.add.sprite(GAME_WIDTH -130, 400, 'resume');
 		resumeButton.setInteractive();
-		interctiveButtons([resumeButton]);
+		interactiveButtons([resumeButton]);
 		switchButton(resumeButton, this, 'mainScene');
 	}
 

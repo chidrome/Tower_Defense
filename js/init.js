@@ -3,15 +3,18 @@
 
 var Enemy = new Phaser.Class({
  
-        Extends: Phaser.GameObjects.Image,
+        Extends: Phaser.GameObjects.Sprite,
  
         initialize:
  
         function Enemy (scene)
         {
-            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'spider');
+            Phaser.GameObjects.Sprite.call(this, scene, 0, 0, 'spider');
+            Phaser.GameObjects.Sprite.call(this, scene, 0, 0, 'walkRight');
             this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
         },
+
+
 
         startOnPath: function ()
         {
@@ -28,6 +31,7 @@ var Enemy = new Phaser.Class({
             this.hp = ENEMY_LIFE;
 
             // animate the spider
+            this.anims.play('walkStraight');
 
         },
 
@@ -67,8 +71,12 @@ var Enemy = new Phaser.Class({
                 PLAYER_LIFE -= 1;
                 textLife.text = 'Life: ' + PLAYER_LIFE;
                 checkWin(); // when there are no more enemies on the board round over text will display
-
             }
+            else if (enemyPosition === path.getPoint(100, 138))
+            {
+                this.anims.stop();
+                // this.anims.play('walkRight');
+            };
         }
  
 });
@@ -187,6 +195,7 @@ function canPlaceTurret(i, j) {
 
 
 function placeTurret(pointer) {
+    var turretPlacementArray = TURRET_NUMBER
     var i = Math.floor(pointer.y/40);
     var j = Math.floor(pointer.x/40);
     if(canPlaceTurret(i, j) && MONEY >= TURRET_COST && !startGame) {
@@ -195,12 +204,14 @@ function placeTurret(pointer) {
         {
             turret.setActive(true);
             turret.setVisible(true);
+            // turret.setInteractive();
             turret.place(i, j);
             subtractMoney(TURRET_COST);
-        }   
+            turretPlacementArray.push(turretPlacementArray.length + 1);
+        }
+        console.log(turretPlacementArray);
     }
 }
-
 
 function addBullet(x, y, angle) {
     var bullet = bullets.get();
@@ -293,7 +304,6 @@ function nextLevel(){
             textNextLevel.alpha = 1;
             break;
         case (LEVEL > 11 && startGame && textRoundOver.alpha === 1):
-            MONEY_PER_KILL -= 5;
             ENEMY_MAX_QTY += 7;
             ENEMY_LIFE += 125;
             LEVEL++;
@@ -309,14 +319,14 @@ function nextLevel(){
             ENEMY_LIFE += 125;
             LEVEL++;
             textRoundOver.alpha = 0;
-            startGame = false;
+            startGame = false;      
             textLevel.text = 'Level: ' + LEVEL;
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
             break;
          case (LEVEL > 8 && startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 5;
-            ENEMY_SPEED += .000001; 
+            // ENEMY_SPEED += .000001; 
             ENEMY_LIFE += 400;
             LEVEL++;
             textRoundOver.alpha = 0;
@@ -326,7 +336,7 @@ function nextLevel(){
             textNextLevel.alpha = 1;
             break;
         case (LEVEL > 7 && startGame && textRoundOver.alpha === 1):
-            MONEY_PER_KILL -= 5;
+            MONEY_PER_KILL -= 15;
             ENEMY_MAX_QTY += 5;
             ENEMY_SPEED += .000002; 
             ENEMY_LIFE += 125;
@@ -337,28 +347,30 @@ function nextLevel(){
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
             break;
-        case (LEVEL > 4 && startGame && textRoundOver.alpha === 1):               
+        case (LEVEL > 3 && startGame && textRoundOver.alpha === 1):               
             ENEMY_MAX_QTY += 3;
             ENEMY_SPEED += .000005; // only incrementing the enemy speed by half of what it was the first 5 levels
             SPAWN_TIME -= 100;
-            ENEMY_LIFE += 65;   
+            ENEMY_LIFE += 200;   
             LEVEL++;
             textRoundOver.alpha = 0;
             startGame = false;
             textLevel.text = 'Level: ' + LEVEL;
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
+            upgradeTurrets(turrets.getChildren());
             break;
         case (startGame && textRoundOver.alpha === 1):
             ENEMY_MAX_QTY += 3;
             ENEMY_SPEED += .000012;
-            ENEMY_LIFE += 65;
+            ENEMY_LIFE += 100;
             LEVEL++;
             textRoundOver.alpha = 0;
             startGame = false;
             textLevel.text = 'Level: ' + LEVEL;
             CURRENT_LVL_QTY = 0;
             textNextLevel.alpha = 1;
+            upgradeTurrets(turrets.getChildren());
             break;
         default:
     }
@@ -385,11 +397,10 @@ function setInteractive(buttonsArray){
 }
 
 // change the size of the buttons when the pointer is over it
-function interctiveButtons(buttonsArray){
+function interactiveButtons(buttonsArray){
     buttonsArray.forEach(function(button){      
         button.on('pointerover', function()
         {
-
             button.setScale(1.2, 1.2);
         });
         button.on('pointerout', function()
@@ -398,6 +409,41 @@ function interctiveButtons(buttonsArray){
         });
     })
 }
+
+function upgradeTurrets(turretsArray){
+    turretsArray.forEach(function(turret){
+        turret.setInteractive();
+        turret.on('pointerover', function()
+        {
+            if(!startGame){
+                turret.setScale(1.2, 1.2);
+                textNextLevel.alpha = 0;
+                upgrade.alpha = 1;
+            }
+        });
+        turret.on('pointerout', function()
+        {
+            if(!startGame){
+                turret.setScale(1, 1);
+                textNextLevel.alpha = 1;
+                upgrade.alpha = 0;
+            }
+
+        });
+        turret.on('pointerdown', function(){
+            if(!startGame && MONEY >= 450){
+                BULLET_DAMAGE += 50;
+                MONEY -= 450;
+                turret.setTint(0xFF0000);
+                turret.disableInteractive();
+                textCurrency.text = 'Money: ' + MONEY;
+                console.log(BULLET_DAMAGE);
+            }
+
+        });
+    })
+}
+
 
 // be able to switch scenes.
 function switchButton(button, thegame, whichScene){
