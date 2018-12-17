@@ -328,7 +328,7 @@ function nextLevel(){
         case (LEVEL > 7 && startGame && textRoundOver.alpha === 1):
             MONEY_PER_KILL -= 5;
             ENEMY_MAX_QTY += 5;
-            ENEMY_SPEED += .000012; 
+            ENEMY_SPEED += .000002; 
             ENEMY_LIFE += 125;
             LEVEL++;
             textRoundOver.alpha = 0;

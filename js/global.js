@@ -24,7 +24,7 @@ var BULLET_DAMAGE = 50;
 var ENEMY_SPEED = .2/10000;
 var ENEMY_MAX_QTY = 5;
 var TURRET_MAX_QTY = 4;
-var ENEMY_LIFE = 100;
+var ENEMY_LIFE = 500;
 var ROUND_OVER_COUNTER = 1; // uses round over counter to end the round once it hits 0. 
 var TURRET_COST = 250;
 var CURRENT_LVL_QTY = 0; // used for stopping enemies from spawning when the current lvl qty === enemy max qty
